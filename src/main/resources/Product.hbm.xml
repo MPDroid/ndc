@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 29, 2016 11:56:47 AM by Hibernate Tools 5.1.0.Beta1 -->
+<hibernate-mapping>
+    <class name="com.drug.model.Product" table="product" catalog="drug" >
+    <meta attribute="class-description">
+         This class contains the drug detail. 
+      </meta>
+            <id name="id" column="PRODUCTID" type="string"/>
+             <property name="productndc" column="PRODUCTNDC"   type="string">
+            </property>         
+          <property name="producttypename" type="string">
+                <column name="PRODUCTTYPENAME" length="65535" />
+            </property>
+            <property name="proprietaryname" type="string">
+                <column name="PROPRIETARYNAME" length="65535" />
+            </property>
+           <property name="proprietarynamesuffix" type="string">
+                <column name="PROPRIETARYNAMESUFFIX" length="65535" />
+            </property>
+            <property name="nonproprietaryname" type="string">
+                <column name="NONPROPRIETARYNAME" length="65535" />
+            </property>
+            <property name="dosageformname" type="string">
+                <column name="DOSAGEFORMNAME" length="65535" />
+            </property>
+            <property name="routename" type="string">
+                <column name="ROUTENAME" length="65535" />
+            </property>
+            <property name="startmarketingdate" type="string">
+                <column name="STARTMARKETINGDATE" length="65535" />
+            </property>
+            <property name="endmarketingdate" type="string">
+                <column name="ENDMARKETINGDATE" length="65535" />
+            </property>
+            <property name="marketingcategoryname" type="string">
+                <column name="MARKETINGCATEGORYNAME" length="65535" />
+            </property>
+            <property name="applicationnumber" type="string">
+                <column name="APPLICATIONNUMBER" length="65535" />
+            </property>
+            <property name="labelername" type="string">
+                <column name="LABELERNAME" length="65535" />
+            </property>
+            <property name="substancename" type="string">
+                <column name="SUBSTANCENAME" length="65535" />
+            </property>
+            <property name="activeNumeratorStrength" type="string">
+                <column name="ACTIVE_NUMERATOR_STRENGTH" length="65535" />
+            </property>
+            <property name="activeIngredUnit" type="string">
+                <column name="ACTIVE_INGRED_UNIT" length="65535" />
+            </property>
+            <property name="pharmClasses" type="string">
+                <column name="PHARM_CLASSES" length="65535" />
+            </property>
+            <property name="deaschedule" type="string">
+                <column name="DEASCHEDULE" length="65535" />
+            </property>
+               
+      </class>
+</hibernate-mapping>

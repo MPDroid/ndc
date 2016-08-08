@@ -1,0 +1,61 @@
+<div class="container-fluid">
+	<form ng-submit="$ctrl.searchClicked()" name="searchform" >
+  <div class="row">
+    <br/>
+      <table border="0" width="80%" align="center" bgcolor="#fff">
+			<tr>
+				<td colspan="2" align="center">				
+				<a href="../jsp/ndc.jsp">JSP</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				AngularJS
+</td>
+			</tr>
+        <tr><td colspan=2 style="font-size:150%;" align="center">
+        <h3>National Drug Codes</h3></td></tr>
+        <tr>
+          <td colspan="2" align="center">
+                  <input ng-model="$ctrl.drugName" ng-model-onblur ng-change="$ctrl.drugNameChanged()" size="50" style="font-size:100%"/>
+        </td></tr>        
+        <tr><td colspan=2 align="center">
+    <br/>
+        <input  type="submit" name="search" value="Search" style="font-size:100%" ng-click="$ctrl.searchClicked()"></td></tr>
+      </table>
+    <br/><br/>
+   </div>
+   <div class="row" ng-show="$ctrl.drugs != null "> 
+      <p style="text-align:center" ng-show="$ctrl.totalSize > 1">
+      <span ng-show="$ctrl.firstPageInSet == 1">Previous</span>
+      <a ng-click="$ctrl.pageSet($ctrl.firstPageInSet - $ctrl.pageSetSize )" ng-show="$ctrl.firstPageInSet > 1">Previous</a>
+      &nbsp;&nbsp;
+      <span ng-repeat="n in $ctrl.range($ctrl.firstPageInSet, $ctrl.lastPageInSet)">
+      <span ng-show="$ctrl.pageNum == n">{{n}}</span>
+      <a ng-click="$ctrl.pageClicked(n)" ng-show="$ctrl.pageNum != n">{{n}}</a>
+      &nbsp;&nbsp;
+      </span>
+      <span ng-show="$ctrl.lastPageInSet == $ctrl.totalSize">Next</span>
+      <a ng-click="$ctrl.pageSet($ctrl.firstPageInSet + $ctrl.pageSetSize)" ng-show="$ctrl.lastPageInSet < $ctrl.totalSize">Next</a>
+      </p>
+      <table class="summary" border="0" width="80%" align="center" >
+         <tr ng-show="$ctrl.totalSize > 0" >
+                   <th width="15%"><b>NDC</b></th>
+                   <th width="15%"><b>Proprietary name</b></th>
+                   <th width="20%"><b>Non-proprietary name</b></th>
+                   <th width="20%"><b>Dosage form</b></th>
+                   <th width="20%"><b>Strength</b></th>
+          </tr>
+         <tr ng-show="$ctrl.totalSize == 0" >
+				<td colspan=5 align="center" style="background-color: #fff"><b>No
+						Records Found..</b></td>
+          </tr>
+          <!--  filter:$ctrl.search -->
+        <tr ng-repeat="drug in $ctrl.drugs">
+	              <td width="15%"><a href="#!/anglr/detail/{{drug.productndc}}">{{drug.productndc}}</a></td>
+	              <td width="15%">{{drug.proprietaryname}} {{drug.proprietarynamesuffix}}</td>
+	              <td width="20%">{{drug.nonproprietaryname}}</td>
+	              <td width="20%">{{drug.dosageformname}}</td>
+	              <td width="20%">{{drug.activeNumeratorStrength}} {{drug.activeIngredUnit}}</td>
+	              </tr>
+       </table>
+       
+  </div>
+       </form>
+</div>

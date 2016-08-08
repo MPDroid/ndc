@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 29, 2016 11:56:47 AM by Hibernate Tools 5.1.0.Beta1 -->
+<hibernate-mapping>
+    <class name="com.drug.model.Package" table="package" catalog="drug" optimistic-lock="version">
+        <composite-id name="id" class="com.drug.model.PackageId">
+            <key-property name="productid" type="string">
+                <column name="PRODUCTID" length="100" />
+            </key-property>
+            <key-property name="ndcpackagecode" type="string">
+                <column name="NDCPACKAGECODE" length="20" />
+            </key-property>
+        </composite-id>
+                  <property name="productndc" type="string">
+                <column name="PRODUCTNDC" length="20" />
+            </property>
+            <property name="packagedescription" type="string">
+                <column name="PACKAGEDESCRIPTION" length="65535" />
+            </property>
+    </class>
+</hibernate-mapping>

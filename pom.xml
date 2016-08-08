@@ -47,9 +47,21 @@
   	<artifactId>hibernate-core</artifactId>
   	<version>4.3.11.Final</version>
   </dependency>
+  <dependency>
+  	<groupId>org.apache.maven.plugins</groupId>
+  	<artifactId>maven-release-plugin</artifactId>
+  	<version>2.5.3</version>
+  	<type>maven-plugin</type>
+  </dependency>
   </dependencies>
   <build>
     <finalName>ndc</finalName>
   </build>
   <groupId>ndc</groupId>
+  <description>Demo application to contrast web application frameworks</description>
+  <scm>
+  	<url>scm:git:git@github.com:mpdroid/ndc.git</url>
+  	<connection>scm:git:git@github.com:mpdroid/ndc.git</connection>
+  	<developerConnection>scm:git:git@github.com:mpdroid/ndc.git</developerConnection>
+  </scm>
 </project>

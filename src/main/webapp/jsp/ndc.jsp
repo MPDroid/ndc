@@ -27,6 +27,7 @@
 
 <html>
 <head>
+<title>National Drug Codes</title>
     <link rel="stylesheet" href="../anglr/bower_components/bootstrap/dist/css/bootstrap.css" />
 <LINK REL=StyleSheet HREF="../css/drug.css" TYPE="text/css">
 <script type="text/javascript" src="../js/drug.js"></script>
@@ -52,6 +53,8 @@
 				<td colspan="2" align="center">
 				JSP&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 				<a href="../anglr">AngularJS</a>
+				&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="../react">ReactJS</a>
 				</td>
 			</tr>
 			<tr>

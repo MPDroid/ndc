@@ -1,0 +1,374 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>National Drug Codes</title>
+<script src="https://npmcdn.com/react@15.3.0/dist/react.js"></script>
+<script src="https://npmcdn.com/react-dom@15.3.0/dist/react-dom.js"></script>
+<script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+<script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script>
+<script src="https://npmcdn.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
+<script src="https://npmcdn.com/react-router/umd/ReactRouter.js"></script>
+<link rel="stylesheet"
+	href="../anglr/bower_components/bootstrap/dist/css/bootstrap.css" />
+<link rel="stylesheet" href="../css/drug.css">
+	<script type="text/babel">
+
+//var Router = ReactRouter;
+//var DefaultRoute = Router.DefaultRoute;
+var Link = ReactRouter.Link;
+//var Route = Router.Route;
+//var RouteHandler = Router.RouteHandler;
+//var browserHistory = Router.browserHistory;
+//var withRouter = Router.withRouter;
+
+
+var PageHeading = React.createClass({
+  
+  render: function() {
+    return (
+            <div>
+				<a href="../jsp/ndc.jsp">JSP</a>
+                &nbsp;&nbsp;&nbsp;
+                |
+                &nbsp;&nbsp;&nbsp;
+				<a href="../anglr">AngularJS</a>
+                &nbsp;&nbsp;&nbsp;
+                |
+                &nbsp;&nbsp;&nbsp;
+                ReactJS
+            </div>
+   );
+ }
+});
+
+var PageTitle = React.createClass({
+  render: function() {
+    return (
+                 <h3>National Drug Codes</h3>
+   );
+ }
+});
+
+var SearchBox = React.createClass({
+  getInitialState: function() {
+    return {drugStr: ''};
+  },
+  drugNameChanged: function (e) {
+   this.setState({drugStr: e.target.value});
+   this.props.onDrugNameChange(e.target.value);
+  },
+  searchClicked: function () {
+   this.props.onSearchClick(this.state.drugStr);
+  },
+  render: function() {
+    return (
+            <div>
+             <input 
+                type="text" 
+                value={this.state.drugStr}
+                 onChange={this.drugNameChanged}
+                size="50" 
+                
+             />
+            <br/><br/>
+             <input  
+                 type="button" 
+                 name="search" 
+                 value="Search" 
+                 onClick={this.searchClicked}
+              /></div>
+    );
+  }
+});
+
+var Paginator = React.createClass({
+   anchorify: function(value) {
+    if (value == this.props.pageNum)
+      return (
+            <font key={value}>&nbsp;&nbsp;
+             {value}
+            &nbsp;&nbsp;</font>
+      );
+    else
+      return (
+            <font key={value}>&nbsp;&nbsp;
+             <a href="#" onClick={this.props.onPageSelect} >{value}</a>
+            &nbsp;&nbsp;</font>
+      );
+  },
+   getPageLinks: function() {
+        if(this.props.totalSize == 0)
+           return;
+        var tags=[];
+
+        var first = this.props.firstPageInSet;
+        var last = this.props.lastPageInSet;
+ 
+        if(first == 1)
+          tags.push(<span key="0">Previous</span>);
+        else
+          tags.push(<a href="#" key="0" onClick={this.props.onPrevious}>Previous</a>);
+
+        for (var i=first; i<= last; i++) {
+            var anchor = this.anchorify(i);
+            tags.push(anchor);
+        }
+
+        var nextKey=last+1;
+        if(last >= this.props.totalSize)
+          tags.push(<span key={nextKey}>Next</span>);
+        else
+          tags.push(<a href="#" key={nextKey} onClick={this.props.onNext}>Next</a>);
+
+         return <span>{tags}</span>;
+  },
+  render: function() {
+     return (
+             <p style={{textAlign:"center"}}>
+              {this.getPageLinks()}
+             </p>
+     );   
+  }
+  
+});
+
+
+var DrugRow = React.createClass({
+   render: function() {
+     return (
+      <tr>
+         <td><Link to={"/ndc/react/detail/" + this.props.ndc}>{this.props.ndc}</Link></td>
+         <td>{this.props.name}</td>
+         <td>{this.props.ingredient}</td>
+         <td>{this.props.dosage}</td>
+         <td>{this.props.strength}</td>
+      </tr>
+     );
+   }
+});
+
+
+var NoRecordsFound = React.createClass({
+   render: function() { 
+       return (<tbody>
+               <tr>
+				<td colSpan="5" style={{textAlign: "center", backgroundColor: "#fff"}}><b>No
+						Records Found..</b></td>
+            </tr>
+      </tbody>);
+       }
+
+});
+
+
+var NDCResults = React.createClass({
+   render: function() { 
+           return (
+           <tbody>
+           <tr >
+                   <th style={{width:"15%"}}><b>NDC</b></th>
+                   <th style={{width:"15%"}}><b>Proprietary name</b></th>
+                   <th style={{width:"20%"}}><b>Non-proprietary name</b></th>
+                   <th style={{width:"20%"}}><b>Dosage form</b></th>
+                   <th style={{width:"20%"}}><b>Strength</b></th>
+          </tr>
+          {this.props.rows}
+         </tbody>);
+      }
+});
+
+var NDCTable = React.createClass({
+   render: function() { 
+           return (
+      <div className="row">
+         <table className="summary" style={{border:"0px", width: "80%", textAlign: "center"}} >
+         { (this.props.rows.length == 0) ?
+             <NoRecordsFound/> :      <NDCResults rows={this.props.rows} /> } 
+          </table>
+      </div> 
+);
+      }
+});
+var NDCSearchForm = React.createClass({
+  getInitialState: function() {
+    return {
+        drugName: "", 
+        hasDrugNameChanged:false,
+        firstPageInSet:1,
+        pageNum:1,
+        pageSize:5,
+        lastPageInSet: 0,
+        pageSetSize: 10,
+        data:[],
+        totalSize:0,
+        searchClicked:false
+    };
+  },
+ getDrugsFromServer: function(drugName) {
+    var rsurl = "/ndc/rs/drug/list/" + drugName;
+    $.ajax({
+      url: rsurl,
+      dataType: 'json',
+      data: {
+            pageNum : this.state.pageNum,
+            pageSize : this.state.pageSize,
+            totalSize : this.state.totalSize
+            } ,    
+      cache: false,
+      success: function(data, textStatus, request) {
+        var totSize = request.getResponseHeader('X-total-count');
+        var last = this.state.firstPageInSet + this.state.pageSetSize - 1;
+        if (last > totSize)
+           last = totSize;
+
+        this.setState({data: data,lastPageInSet:last,totalSize: totSize });
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(rsurl, status, err.toString());
+      }.bind(this)
+    });
+  }, 
+ handlePrevious: function() {
+    var newFirst = this.state.firstPageInSet - this.state.pageSetSize;
+    var newLast = newFirst + this.state.pageSetSize - 1;
+     
+    this.setState({pageNum: newFirst, firstPageInSet: newFirst, lastPageInSet: newLast}, 
+    function() {
+       this.getDrugsFromServer(this.state.drugName);
+    });
+  },
+  handleNext: function() {
+    var newFirst = this.state.firstPageInSet + this.state.pageSetSize;
+    var newLast = newFirst + this.state.pageSetSize - 1;
+    this.setState({pageNum: newFirst, firstPageInSet: newFirst, lastPageInSet: newLast}, 
+    function() {
+       this.getDrugsFromServer(this.state.drugName);
+    });
+
+  },
+  handlePageSelect: function(e) {
+    e.preventDefault();
+    this.setState({pageNum: e.target.text}, 
+      function() { 
+        this.getDrugsFromServer(this.state.drugName);
+      });
+  },
+  handleDrugNameChange: function(newDrugName) {
+     this.setState({drugName:newDrugName, pageNum: 1, firstPageInSet: 1, lastPageInSet: 0, totalSize:0});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    if(this.state.drugName != null)
+      this.handleSearch(this.state.drugName);
+  },
+  handleSearch: function(newDrugName) {
+     this.setState({drugName: newDrugName,searchClicked:true},
+     this.getDrugsFromServer(newDrugName));
+  },
+   render: function() {
+
+    var drugNodes = this.state.data.map(function(drug) {
+      return (
+        <DrugRow 
+               key={drug.productndc} 
+               ndc={drug.productndc} 
+               name={drug.proprietaryname + " " + drug.proprietarynamesuffix}
+               ingredient={drug.nonproprietaryname}
+               dosage={drug.dosageformname}
+               strength={drug.activeNumeratorStrength + " " + drug.activeIngredUnit}
+         />
+      );
+    });  
+
+
+    return (
+     <form className="searchForm" onSubmit={this.handleSubmit}>
+     <br/><br/>
+     <table style={{border:"0px", width:"80%", textAlign: "center", margin: "auto", backgroundColor:"#fff"}}>
+      <tbody>
+             <tr>
+			  <td colSpan="2" style={{textAlign:"center"}}>				
+                  <PageHeading />
+               </td>
+			</tr>
+             <tr>
+			  <td colSpan="2" style={{textAlign:"center"}}>				
+                  <PageTitle />
+              </td>
+			</tr>
+            <tr>
+               <td colSpan="2" style={{fontSize:"100%",textAlign:"center"}}>
+                 <SearchBox onSearchClick={this.handleSearch} onDrugNameChange={this.handleDrugNameChange} />
+             </td>
+			</tr>
+     </tbody>
+     </table>
+     <br/><br/>
+     <Paginator 
+              firstPageInSet={this.state.firstPageInSet}
+              lastPageInSet={this.state.lastPageInSet}
+              totalSize={this.state.totalSize}
+              pageNum={this.state.pageNum}
+              onPageSelect={this.handlePageSelect}
+              onPrevious={this.handlePrevious}
+              onNext={this.handleNext}
+
+        />
+
+       { (this.state.searchClicked == true) ? < NDCTable rows={drugNodes}/> : null }
+      
+  
+        </form>
+    );
+  }
+}
+);
+var NDCDetails = React.createClass({
+  render:function() {
+
+return(
+<div className="container-fluid">
+  <div className="row">
+
+	<br />
+	<br />
+	<table  style={{border:"0px", width:"80%", margin:"auto", textAlign:"center"}}>
+     
+   <tbody>
+ 		<tr>
+
+			<td style={{textAlign:"center",  backgroundColor: "#fff"}}><h2>
+
+					Drug Details for NDC:{this.props.params.ndc}</h2></td>
+		</tr>
+     </tbody>
+    </table>
+   </div>
+</div>);
+  }
+});
+
+var NDCRoutes = React.createClass({
+  render: function() {
+ return(<ReactRouter.Router history={ReactRouter.browserHistory}>
+ <ReactRouter.Route path="/ndc/react/" component={NDCSearchForm} />
+ <ReactRouter.Route path="/ndc/react/detail/:ndc" component={NDCDetails} />
+</ReactRouter.Router>);
+  }
+});
+
+
+ReactDOM.render(<NDCRoutes />, document.getElementById('content'));
+
+
+//ReactDOM.render( <NDCSearchForm   />,  document.getElementById('content'));
+
+    </script>
+</head>
+<body>
+	<div id="content"></div>
+</body>
+</html>

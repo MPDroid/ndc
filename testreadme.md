@@ -34,8 +34,7 @@
 
 ### Prerequisities
 
-- Set up your Websphere development environment for HIPAA web application using the [PeopleSafe environment setup guide](http://sharepoint/sites/ccms/MIC/PeopleSafeDev)
-  at `Shared Documents/PeopleSafe Local Config Docs/Setup RAD 8.5 Workspace v2.6.docx`
+- Set up your Websphere development environment for HIPAA web application using the [PeopleSafe environment setup guide][1].
 
 - Obtain `node 4.6.0` installer and `selenium server 2.45.0` library from [OpenLogic](https://olex-secure.openlogic.com) or as directed by Enterprise Arcitect
 
@@ -132,14 +131,61 @@ npm list --depth=0
 npm start
 ```
   - This should compile and start the application in development mode with connection to mock backend. The web application should be accessible at [http://localhost:8080](http://localhost:8080).
+  - This also watches the source directories for changes to TypeScript and automatically transpiles into JavaScript and refreshes the web application. This allows you to observe the impact of your code changes immediately upon saving your edits.
+  - `config\webpack.dev.js` and `config\webpack.common.js` have `[WebPack][2]` configurations for development mode.
 
 ## Style Checking
+- Run the style check. Open another command prompt and change directory to `HPAAngular` root directory.
+```
+env
+npm run lint
+```
+  - This should complete without any errors.
+  - Style checking rules are defined in `tslint.json` and applied by the `[tslint][4]` package.
 
 ## Unit Testing
-- Run the unit tests. Open another command prompt and change directory to `HPAAngular` root directory
+- Run the unit tests (Open another command prompt and change directory to `HPAAngular` root directory)
 ```
 env
 npm run test
 ```
   - This should execute all the unit tests defined in `.spec.ts` files in the `src` sub-directories.
   - Test status should be displayed in the console and als piped into a test report `ut\unit_test_report.html`.
+  - Unit testing uses `[Karma][3]` as test runner and `angular 2` and `[jasmine][4]` libraries to setup test components, fixtures and validate results
+  - `config\karma.conf.js` has configurations such as test frameworks to use and test reporting configuration
+  - `config\spec-bundle.js` has global initialization for the karma tests including the path to look for test specs. Edit the line below to limit the test run to a specific module or source sub-directory.
+```
+var testContext = require.context('../src', true, /\.spec\.ts/);
+```
+  - `config\webpack.test.js` has `[WebPack][2]` configurations specific to unit testing including the mock backend URLs.
+
+## Build
+- Creates the bundled JavaScript and other assets for deployment to Web Application Server. Open another command prompt and change directory to `HPAAngular` root directory
+```
+env
+npm run build
+```
+  - This should create bundled html, js, css and image assets in the `dist` folder.
+  - This should also execute `mvd.cmd` and copy the assets to the directory specified by `DIST_TARGET` environment variable.
+  - Then follow the instructions in [PeopleSafe environment setup guide][1] to create the `HPA.ear` file and deploy it to dev or test server for integrated testing.
+  - `config\webpack.prod.js` and `config\webpack.common.js` has `[WebPack][2]` configurations specific to building for production and integrated testing.
+
+
+## End-to-End Testing
+- Run the end-to-end tests using command below (Open another command prompt and change directory to `HPAAngular` root directory)
+```
+env
+cd e2e
+e2e.cmd
+```
+  - This should run end-to-end tests on `FireFox` and `Chrome` browsers and produce test results in HTML format in the same folder.
+  - Edit `e2e.cmd` to change the target application URLs or test with additional browsers.
+  - Tests can be recorded using [Selenium IDE][6] and executed in command line using the [Selenium standalone server][7]
+
+[1]: http://sharepoint/sites/ccms/MIC/PeopleSafeDev/Shared%20Documents/PeopleSafe%20Local%20Config%20Docs/Setup%20RAD%208.5%20Workspace%20v2.6.docx
+[2]: https://webpack.github.io/
+[3]: https://karma-runner.github.io/
+[4]: https://jasmine.github.io/
+[5]: https://palantir.github.io/tslint
+[6]: http://www.seleniumhq.org/projects/ide/
+[7]: http://www.seleniumhq.org/projects/webdriver/

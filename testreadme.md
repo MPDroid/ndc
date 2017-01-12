@@ -16,12 +16,12 @@
 - Authentication is managed using PBM Client Services Infrastructure libraries 
 
 ## Contents
-- [Before Installation](before-installation)
-- [Installation](installation)
-- [Style checking](style-checking)
-- [Unit Testing](unit-testing)
-- [Build](build)
-- [End-to-End Testing](end-to-end-testing)
+- [Before Installation](#before-installation)
+- [Installation](#installation)
+- [Style checking](#style-checking)
+- [Unit Testing](#unit-testing)
+- [Build](#build)
+- [End-to-End Testing](#end-to-end-testing)
 
 ## Before Installation
 
